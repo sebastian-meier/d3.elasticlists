@@ -1,0 +1,115 @@
+<html>
+<head>
+	<style type="text/css">
+
+		#container{
+			width:500px;
+			height:400px;
+			margin:0;
+			padding:0;
+		}
+
+		svg{
+			width:100%;
+		}
+
+		.el-row{
+			fill:rgba(0,0,0,1);
+			fill-opacity:0.2;
+		}
+
+		.el-row.el-count-0{
+			fill-opacity:0.1;
+		}
+
+		.el-col{
+			overflow-y: auto;
+			margin:0;
+			padding:0;
+		}
+
+		.el-text{
+			font-family: sans-serif;
+			font-size: 10px;
+		}
+
+		.el-text.el-count-0{
+			opacity: 0.3;
+		}
+
+		.el-text-right{
+			opacity:0.3;
+		}
+
+		.el-click{
+			fill:rgba(58, 174, 240, 1);
+			opacity:0;
+			pointer-events:all;
+			cursor:pointer;
+		}
+
+		.el-click:hover{
+			opacity: 0.2;
+		}
+
+		.el-head rect{
+			fill:rgba(0,0,0,0.3);
+		}
+
+		.el-head text{
+			font-family: sans-serif;
+			font-size: 12px;
+		}
+
+		.el-row.el-selected{
+			fill:rgba(58, 174, 240, 1);
+			fill-opacity:0.4;
+		}
+
+	</style>
+	<script type="text/javascript">
+		//Create a random dataset with countries, medals and years
+		var data = [];
+
+		var countries = ['DE', 'UK', 'CN', 'RU', 'PL'];
+		var medals = ['Gold', 'Silver', 'Bronce'];
+		var years = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010];
+
+		for(var i = 0; i<10000; i++){
+			
+			var item = {
+				id:i,
+				country:countries[Math.round(Math.random()*(countries.length-1))],
+				medal:medals[Math.round(Math.random()*(medals.length-1))],
+				year:years[Math.round(Math.random()*(years.length-1))]
+			};
+
+			data.push(item);
+		}
+
+	</script>
+</head>
+<body>
+
+	<div id="container"></div>
+
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="../lib/d3.tools.min.js" charset="utf-8"></script>
+	<script src="../d3.elasticlists.js" charset="utf-8"></script>
+	<script type="text/javascript">
+
+	var args = {
+		id: 'id',
+		columns: ['country', 'medal', 'year'],
+		data: data
+	};
+
+	var list = elasticLists(args);
+	list.updateData();
+	list.on("update", function(els){console.log(els);});
+
+	d3.select('#container').call(list);
+
+	</script>
+</body>
+</html>
