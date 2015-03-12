@@ -1,3 +1,5 @@
+/*global d3:false */
+
 //EXTEND SO THAT DATA FIELDS can contain multiple values separated by comma as an option
 
 var elasticLists = function(args){
@@ -11,7 +13,6 @@ var elasticLists = function(args){
 
 	var filters = [];
 	var lists = [];
-	var ypos = [];
 	var cwidth = 0;
 	var rheight = 0;
 	var y;
@@ -32,7 +33,7 @@ var elasticLists = function(args){
 		rheight = mySelection.node().getBoundingClientRect().height;
 
 		var i = 0;
-		for(l in lists){
+		for(var l in lists){
 			var headSvg = mySelection.append("div")
 				.attr("id", "head-"+config.columns[i])
 				.attr("class", "el-head")
@@ -56,7 +57,7 @@ var elasticLists = function(args){
 		}
 
 		i = 0;
-		for(l in lists){
+		for(var l in lists){
 			var listDiv = mySelection.append("div")
 				.attr("id", "list-"+config.columns[i])
 				.attr("data-column", config.columns[i])
@@ -71,20 +72,20 @@ var elasticLists = function(args){
 			listSvg.selectAll("rect.el-row")
 				.data(lists[l])
 				.enter().append("rect")
-					.attr("class", function(d,i){ return "el-row el-count-"+d.count; })
+					.attr("class", function(d){ return "el-row el-count-"+d.count; })
 					.attr("x", 0)
 					.attr("width", cwidth-10);
 
 			listSvg.selectAll("text.el-text-left")
 				.data(lists[l])
 				.enter().append("text")
-					.attr("class", function(d,i){ return "el-text el-text-left el-count-"+d.count; })
+					.attr("class", function(d){ return "el-text el-text-left el-count-"+d.count; })
 					.attr("x", 5);
 
 			listSvg.selectAll("text.el-text-right")
 				.data(lists[l])
 				.enter().append("text")
-					.attr("class", function(d,i){ return "el-text el-text-right el-count-"+d.count; })
+					.attr("class", function(d){ return "el-text el-text-right el-count-"+d.count; })
 					.attr("text-anchor", "end")
 					.attr("x", cwidth-15);
 
@@ -94,7 +95,7 @@ var elasticLists = function(args){
 					.attr("class", "el-click")
 					.attr("x", 0)
 					.attr("width", cwidth-10)
-					.on("click", function(d, i){
+					.on("click", function(d){
 						my.changeFilter(d3.select(this.parentNode).attr("data-column"), d.name);
 						my.update();
 					});
@@ -108,8 +109,8 @@ var elasticLists = function(args){
 	function isSelected(object, column){
 		var r = false;
 
-		for(f in filters[column]){
-			if(object.name == filters[column][f]){
+		for(var f in filters[column]){
+			if(object.name === filters[column][f]){
 				r = true;
 			}
 		}
@@ -119,7 +120,7 @@ var elasticLists = function(args){
 
 	my.update = function(){
 		var i = 0;
-		for(l in lists){
+		for(var l in lists){
 			d3.select("#svg-"+config.columns[i])
 				.transition()
 				.duration(config.duration)
@@ -127,31 +128,31 @@ var elasticLists = function(args){
 
 			d3.selectAll("#svg-"+config.columns[i]+" rect.el-row")
 				.data(lists[l])
-					.attr("class", function(d,i){ 
+					.attr("class", function(d){
 						var cl = "";
 						if(isSelected(d, d3.select(this.parentNode).attr("data-column"))){
 							cl = "el-selected ";
 						}
-						return cl+"el-row el-count-"+d.count; 
+						return cl+"el-row el-count-"+d.count;
 					})
 					.transition()
 					.duration(config.duration)
-						.attr("y", function(d,i){ return d.y; })
-						.attr("height", function(d,i){ return y(d.count); });
+						.attr("y", function(d){ return d.y; })
+						.attr("height", function(d){ return y(d.count); });
 
 			d3.selectAll("#svg-"+config.columns[i]+" text.el-text-left")
 				.data(lists[l])
-					.attr("class", function(d,i){ return "el-text el-text-left el-count-"+d.count; })
-					.text(function(d,i){ return d.name; })
+					.attr("class", function(d){ return "el-text el-text-left el-count-"+d.count; })
+					.text(function(d){ return d.name; })
 					.transition()
 					.duration(config.duration)
-						.attr("y", function(d,i){ return d.y+(y(d.count)/2)+4; });
+						.attr("y", function(d){ return d.y+(y(d.count)/2)+4; });
 						
 
 			d3.selectAll("#svg-"+config.columns[i]+" text.el-text-right")
 				.data(lists[l])
-					.attr("class", function(d,i){ return "el-text el-text-right el-count-"+d.count; })
-					.text(function(d,i){ return d.count+"/"+d.ocount; })
+					.attr("class", function(d){ return "el-text el-text-right el-count-"+d.count; })
+					.text(function(d){ return d.count+"/"+d.ocount; })
 					.transition()
 					.duration(config.duration)
 						.attr("y", function(d,i){ return d.y+(y(d.count)/2)+4; });
@@ -160,8 +161,8 @@ var elasticLists = function(args){
 				.data(lists[l])
 					.transition()
 					.duration(config.duration)
-						.attr("y", function(d,i){ return d.y; })
-						.attr("height", function(d,i){ return y(d.count); });
+						.attr("y", function(d){ return d.y; })
+						.attr("height", function(d){ return y(d.count); });
 
 			i++;
 		}
@@ -170,19 +171,19 @@ var elasticLists = function(args){
 	function checkFilters(object){
 		var r = true;
 
-		for(f in filters){
+		for(var f in filters){
 			if(filters[f].length >= 1){
 				var tr = false;
-				for(i in filters[f]){
+				for(var i in filters[f]){
 					if(config.multiples){
 						var object_split = object[f].split(config.splitStr);
-						for(o in object_split){
-							if(object_split[o]==filters[f][i]){
+						for(var o in object_split){
+							if(object_split[o] === filters[f][i]){
 								tr = true;
-							}	
+							}
 						}
 					}else{
-						if(object[f]==filters[f][i]){
+						if(object[f] === filters[f][i]){
 							tr = true;
 						}
 					}
@@ -214,8 +215,8 @@ var elasticLists = function(args){
 
 				var value = config.data[d][config.columns[l]];
 				var exists = false;
-				for(c in list){
-					if(list[c].name==value){
+				for(var c in list){
+					if(list[c].name === value){
 						exists = true;
 						if(checkFilters(config.data[d])){
 							list[c].count++;
@@ -237,20 +238,20 @@ var elasticLists = function(args){
 
 		}
 
-		for(l in lists){
+		for(var l in lists){
 			lists[l].sort(function(a,b){
-				if((typeof a.name == "number")&&(typeof b.name == "number")){
+				if((typeof a.name === "number")&&(typeof b.name === "number")){
 					return a.name - b.name;
 				}else{
-					return a.name > b.name;	
+					return a.name > b.name;
 				}
 				
 			});
 		}
 
 		var values = [];
-		for(l in lists){
-			for(ll in lists[l]){
+		for(var l in lists){
+			for(var ll in lists[l]){
 				values.push(lists[l][ll].ocount);
 			}
 		}
@@ -260,9 +261,9 @@ var elasticLists = function(args){
 			.range([20, 60]);
 
 		heights = [];
-		for(l in lists){
+		for(var l in lists){
 			var h = 0;
-			for(ll in lists[l]){
+			for(var ll in lists[l]){
 				lists[l][ll].y = h;
 				//+2 for border
 				h+=y(lists[l][ll].count)+2;
@@ -286,8 +287,8 @@ var elasticLists = function(args){
 		var exists = true;
 		var tempArray = [];
 
-		for(f in filters[name]){
-			if(filters[name][f] == value){
+		for(var f in filters[name]){
+			if(filters[name][f] === value){
 				exists = false;
 			}else{
 				tempArray.push(filters[name][f]);
